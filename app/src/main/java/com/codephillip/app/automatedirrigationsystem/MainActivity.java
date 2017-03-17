@@ -81,7 +81,8 @@ public class MainActivity extends AppCompatActivity
             fragment = new AboutFragment();
             getSupportActionBar().setTitle("Profile");
         } else if (id == R.id.nav_gallery) {
-
+            fragment = new ConfigurationFragment();
+            getSupportActionBar().setTitle("Configuration");
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
