@@ -13,7 +13,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.codephillip.app.automatedirrigationsystem.retrofit.ApiInterface;
-import com.codephillip.app.automatedirrigationsystem.sync.SyncAdapter;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -32,8 +31,10 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        //todo activate in production
 //        SyncAdapter.initializeSyncAdapter(getApplicationContext());
-        SyncAdapter.syncImmediately(getApplicationContext());
+        //todo debug purposes only
+//        SyncAdapter.syncImmediately(getApplicationContext());
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
