@@ -8,11 +8,16 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    String[] screenNames = {
+            "System status", "Configuration", "Feedback", "About"
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +37,7 @@ public class MainActivity extends AppCompatActivity
 
         //todo replace with system status screen
         Fragment fragment = new AboutFragment();
-        getSupportActionBar().setTitle("About");
+        getSupportActionBar().setTitle(screenNames[3]);
         android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.frame,fragment);
         fragmentTransaction.commit();
@@ -74,26 +79,24 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
+        Log.d("Navigation bar", "onNavigationItemSelected: " + id);
         Fragment fragment = null;
-        String name;
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_status) {
             fragment = new AboutFragment();
-            getSupportActionBar().setTitle("Profile");
-        } else if (id == R.id.nav_gallery) {
+            getSupportActionBar().setTitle(screenNames[0]);
+        } else if (id == R.id.nav_configuration) {
             fragment = new ConfigurationFragment();
-            getSupportActionBar().setTitle("Configuration");
-        } else if (id == R.id.nav_slideshow) {
+            getSupportActionBar().setTitle(screenNames[1]);
+        } else if (id == R.id.nav_feedback) {
 
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        } else if (id == R.id.nav_about) {
+            fragment = new AboutFragment();
+            getSupportActionBar().setTitle(screenNames[3]);
         } else {
             return true;
         }
+
         android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.frame,fragment);
         fragmentTransaction.commit();
