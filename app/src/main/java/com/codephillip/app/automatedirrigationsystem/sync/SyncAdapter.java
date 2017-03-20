@@ -25,9 +25,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 
-/**
- * Created by codephillip on 11/9/15.
- */
+
 public class SyncAdapter extends AbstractThreadedSyncAdapter {
     private static final String TAG = SyncAdapter.class.getSimpleName();
 

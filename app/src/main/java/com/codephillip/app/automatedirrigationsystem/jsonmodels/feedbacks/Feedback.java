@@ -22,6 +22,12 @@ public class Feedback {
     @Expose
     private Integer user;
 
+    public Feedback(String title, String content, int user) {
+        this.title = title;
+        this.content = content;
+        this.user = user;
+    }
+
     public Integer getId() {
         return id;
     }

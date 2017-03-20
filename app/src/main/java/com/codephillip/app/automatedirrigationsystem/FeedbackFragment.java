@@ -12,6 +12,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.codephillip.app.automatedirrigationsystem.jsonmodels.feedbacks.Feedback;
+import com.codephillip.app.automatedirrigationsystem.retrofit.ApiClient;
+import com.codephillip.app.automatedirrigationsystem.retrofit.ApiInterface;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+
 
 public class FeedbackFragment extends Fragment{
 
@@ -31,15 +38,12 @@ public class FeedbackFragment extends Fragment{
         titleEditText = (EditText) rootView.findViewById(R.id.title);
         contentEditText = (EditText) rootView.findViewById(R.id.content);
         sendButton = (Button) rootView.findViewById(R.id.send_feedback_button);
-
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 sendFeedback();
             }
         });
-
-
         return rootView;
     }
 
@@ -52,7 +56,6 @@ public class FeedbackFragment extends Fragment{
         titleEditText.setError(null);
         contentEditText.setError(null);
 
-        // Store values at the time of the login attempt.
         String title = titleEditText.getText().toString();
         String content = contentEditText.getText().toString();
 
@@ -98,13 +101,31 @@ public class FeedbackFragment extends Fragment{
         @Override
         protected Boolean doInBackground(Void... params) {
             try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
+                sendFeedback(title, content);
+            } catch (Exception e) {
+                e.printStackTrace();
                 return false;
             }
-
             return true;
+        }
+
+        private void sendFeedback(String topic, String message) {
+            ApiInterface apiInterface = ApiClient.getClient(ApiClient.BASE_URL).create(ApiInterface.class);
+            //todo get user id
+            Feedback feedback = new Feedback(topic, message, 1);
+            Call<Feedback> call = apiInterface.createFeedback(feedback);
+            call.enqueue(new Callback<Feedback>() {
+                @Override
+                public void onResponse(Call<Feedback> call, retrofit2.Response<Feedback> response) {
+                    int statusCode = response.code();
+                    Log.d(TAG, "onResponse: #" + statusCode);
+                }
+
+                @Override
+                public void onFailure(Call<Feedback> call, Throwable t) {
+                    Log.d(TAG, "onFailure: " + t.toString());
+                }
+            });
         }
 
         @Override
