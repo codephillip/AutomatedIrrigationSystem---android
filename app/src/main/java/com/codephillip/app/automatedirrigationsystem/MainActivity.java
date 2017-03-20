@@ -12,13 +12,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.codephillip.app.automatedirrigationsystem.jsonmodels.metrics.Metric;
-import com.codephillip.app.automatedirrigationsystem.jsonmodels.metrics.Metrics;
-import com.codephillip.app.automatedirrigationsystem.retrofit.ApiClient;
 import com.codephillip.app.automatedirrigationsystem.retrofit.ApiInterface;
-
-import retrofit2.Call;
-import retrofit2.Callback;
+import com.codephillip.app.automatedirrigationsystem.sync.SyncAdapter;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -37,6 +32,9 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+//        SyncAdapter.initializeSyncAdapter(getApplicationContext());
+        SyncAdapter.syncImmediately(getApplicationContext());
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -51,30 +49,6 @@ public class MainActivity extends AppCompatActivity
         android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.frame,fragment);
         fragmentTransaction.commit();
-
-        //TODO remove. testing retrofit
-        apiInterface = ApiClient.getClient(ApiClient.BASE_URL).create(ApiInterface.class);
-        loadMetrics();
-    }
-
-    //TODO remove. testing retrofit
-    private void loadMetrics() {
-        Call<Metrics> call = apiInterface.allMetrics();
-        call.enqueue(new Callback<Metrics>() {
-            @Override
-            public void onResponse(Call<Metrics> call, retrofit2.Response<Metrics> response) {
-                Log.d("RETROFIT#", "onResponse: " + response.headers());
-                Metrics metrics = response.body();
-                for (Metric metric : metrics.getMetrics()) {
-                    Log.d("RETROFIT#", "water# " + metric.getWaterVolume());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Metrics> call, Throwable t) {
-                Log.d("RETROFIT#", "onFailure: " + t.toString());
-            }
-        });
     }
 
     @Override

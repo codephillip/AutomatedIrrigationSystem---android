@@ -28,13 +28,13 @@
 
         <TextView
             android:id="@+id/waterVolumeView"
-            android:layout_width="wrap_content"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
-            android:textSize="35sp"
+            android:textSize="30sp"
             android:layout_gravity="center"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="21.53"/>
+            android:text="121.5"/>
 
         <TextView
             android:id="@+id/timeView"

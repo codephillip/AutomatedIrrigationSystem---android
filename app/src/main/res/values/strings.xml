@@ -25,4 +25,8 @@
     <string name="send">Send</string>
     <string name="title">Title</string>
     <string name="content">Content</string>
+
+    <!--sync adapter strings-->
+    <string name="content_authority">com.codephillip.app.automatedirrigationsystem.provider</string>
+    <string name="sync_account_type">com.codephillip.app.automatedirrigationsystem</string>
 </resources>

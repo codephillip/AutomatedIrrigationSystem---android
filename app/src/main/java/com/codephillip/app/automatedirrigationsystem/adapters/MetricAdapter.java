@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.codephillip.app.automatedirrigationsystem.R;
+import com.codephillip.app.automatedirrigationsystem.provider.metrictable.MetrictableCursor;
 
 /**
  * Created by codephillip on 20/03/17.
@@ -67,45 +68,31 @@ public class MetricAdapter extends RecyclerView.Adapter<MetricAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Log.d("Driver#", "onBindViewHolder: "+position);
-//        try{
-//            dataCursor.moveToPosition(position);
-//            String driverName = dataCursor.getString(dataCursor.getColumnIndex(WithinhourColumns.DRIVERNAME));
-//            String carName = dataCursor.getString(dataCursor.getColumnIndex(WithinhourColumns.CARNAME));
-//            String driverImage = dataCursor.getString(dataCursor.getColumnIndex(WithinhourColumns.DRIVERIMAGE));
-//            String carImage = dataCursor.getString(dataCursor.getColumnIndex(WithinhourColumns.CARIMAGE));
-//            String time = dataCursor.getString(dataCursor.getColumnIndex(WithinhourColumns.TIME));
-//
-//            holder.nameView.setText(driverName);
-//            holder.timeView.setText(time);
-//            Utility.picassoLoader(context, holder.imageView, driverImage);
-////            Utility.picassoCircleLoaderNoBorder(context, holder.imageView, driverImage);
-////            Utility.picassoCircleLoaderBorder(context, holder.imageView, imageUrl);
-//        } catch (Exception e){
-//            e.printStackTrace();
-//            holder.nameView.setText("Crystal");
-//            holder.timeView.setText("07:00");
-//            Utility.picassoCircleLoaderNoBorder(context, holder.imageView, R.drawable.profilepic);
-//            Utility.picassoCircleLoaderBorder(context, holder.imageView, R.drawable.profilepic);
-//        }
+        Log.d("Metric#", "onBindViewHolder: "+position);
+        try{
+            dataCursor.moveToPosition(position);
+            MetrictableCursor metric = new MetrictableCursor(dataCursor);
+            holder.waterVolumeView.setText(String.valueOf(metric.getWaterVolume()));
+            holder.dateView.setText(metric.getDate());
+            holder.timeView.setText(metric.getTime());
 
-        //todo extract boolean from table
-        ColorGenerator generator = ColorGenerator.MATERIAL; // or use DEFAULT
-        int color1 = generator.getRandomColor();
-        TextDrawable drawable = TextDrawable.builder()
-                .beginConfig()
-                .width(140)  // width in px
-                .height(140) // height in px
-                .endConfig()
-//                .buildRound(textData.substring(0,1), color1);
-                .buildRound("T", color1);
-        holder.imageView.setImageDrawable(drawable);
+            ColorGenerator generator = ColorGenerator.MATERIAL; // or use DEFAULT
+            int color1 = generator.getRandomColor();
+            TextDrawable drawable = TextDrawable.builder()
+                    .beginConfig()
+                    .width(140)  // width in px
+                    .height(140) // height in px
+                    .endConfig()
+                    .buildRound(metric.getIsirrigating().toString().substring(0,1), color1);
+            holder.imageView.setImageDrawable(drawable);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
     public int getItemCount() {
         // any number other than zero will cause a bug
-//        return (dataCursor == null) ? 0 : dataCursor.getCount();
-        return 10;
+        return (dataCursor == null) ? 0 : dataCursor.getCount();
     }
 }
