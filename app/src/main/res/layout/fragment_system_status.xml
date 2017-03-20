@@ -3,9 +3,6 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingBottom="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_horizontal_margin">
 
     <TextView
@@ -23,5 +20,11 @@
         android:background="@android:color/darker_gray"
         android:id="@+id/view"
         android:layout_marginTop="16dp" />
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/status_recycler"
+        android:layout_marginTop="@dimen/activity_horizontal_margin" />
 
 </LinearLayout>
