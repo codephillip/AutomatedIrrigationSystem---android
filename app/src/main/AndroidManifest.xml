@@ -29,6 +29,12 @@
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login"></activity>
+
+        <provider
+            android:name="com.codephillip.app.automatedirrigationsystem.provider.AISystemProvider"
+            android:authorities="com.codephillip.app.automatedirrigationsystem.provider"
+            android:exported="false" />
+
     </application>
 
 </manifest>

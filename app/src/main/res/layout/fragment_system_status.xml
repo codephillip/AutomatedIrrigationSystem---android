@@ -10,8 +10,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/system_status"
         android:layout_gravity="center"
-        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-        android:text="System status. Replace this"/>
+        android:text="Irrigation On   |   Water Volume   |   Time   |   Date"/>
 
     <View
         android:layout_width="300dp"
