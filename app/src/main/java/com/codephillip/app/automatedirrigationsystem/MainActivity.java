@@ -35,9 +35,8 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        //todo replace with system status screen
-        Fragment fragment = new AboutFragment();
-        getSupportActionBar().setTitle(screenNames[3]);
+        Fragment fragment = new SystemStatusFragment();
+        getSupportActionBar().setTitle(screenNames[0]);
         android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.frame,fragment);
         fragmentTransaction.commit();
@@ -77,7 +76,7 @@ public class MainActivity extends AppCompatActivity
         Fragment fragment = null;
 
         if (id == R.id.nav_status) {
-            fragment = new AboutFragment();
+            fragment = new SystemStatusFragment();
             getSupportActionBar().setTitle(screenNames[0]);
         } else if (id == R.id.nav_configuration) {
             fragment = new ConfigurationFragment();
