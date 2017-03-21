@@ -38,6 +38,14 @@
             android:name=".LoginActivity"
             android:label="@string/title_activity_login"></activity>
 
+        <activity
+            android:name=".LineChartActivity"
+            android:label="@string/title_chart">
+            <intent-filter>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
 
         <service android:name=".sync.AuthenticatorService">
             <intent-filter>
