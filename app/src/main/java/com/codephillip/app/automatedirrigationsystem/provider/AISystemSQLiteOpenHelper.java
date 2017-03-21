@@ -27,6 +27,7 @@ public class AISystemSQLiteOpenHelper extends SQLiteOpenHelper {
             + CroptableColumns.TABLE_NAME + " ( "
             + CroptableColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + CroptableColumns.NAME + " TEXT, "
+            + CroptableColumns.KEY + " INTEGER, "
             + CroptableColumns.OPTIMAL_WATER_LEVEL + " REAL, "
             + CroptableColumns.CROP_TYPE + " TEXT "
             + " );";

@@ -49,6 +49,16 @@ public class CroptableContentValues extends AbstractContentValues {
         return this;
     }
 
+    public CroptableContentValues putKey(@Nullable Integer value) {
+        mContentValues.put(CroptableColumns.KEY, value);
+        return this;
+    }
+
+    public CroptableContentValues putKeyNull() {
+        mContentValues.putNull(CroptableColumns.KEY);
+        return this;
+    }
+
     public CroptableContentValues putOptimalWaterLevel(@Nullable Double value) {
         mContentValues.put(CroptableColumns.OPTIMAL_WATER_LEVEL, value);
         return this;

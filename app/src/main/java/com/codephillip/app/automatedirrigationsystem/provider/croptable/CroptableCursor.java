@@ -1,9 +1,6 @@
 package com.codephillip.app.automatedirrigationsystem.provider.croptable;
 
-import java.util.Date;
-
 import android.database.Cursor;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.codephillip.app.automatedirrigationsystem.provider.base.AbstractCursor;
@@ -33,6 +30,16 @@ public class CroptableCursor extends AbstractCursor implements CroptableModel {
     @Nullable
     public String getName() {
         String res = getStringOrNull(CroptableColumns.NAME);
+        return res;
+    }
+
+    /**
+     * Get the {@code key} value.
+     * Can be {@code null}.
+     */
+    @Nullable
+    public Integer getKey() {
+        Integer res = getIntegerOrNull(CroptableColumns.KEY);
         return res;
     }
 

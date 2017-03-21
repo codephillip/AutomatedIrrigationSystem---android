@@ -18,6 +18,7 @@ import com.codephillip.app.automatedirrigationsystem.jsonmodels.crops.Crop;
 import com.codephillip.app.automatedirrigationsystem.jsonmodels.crops.Crops;
 import com.codephillip.app.automatedirrigationsystem.jsonmodels.metrics.Metric;
 import com.codephillip.app.automatedirrigationsystem.jsonmodels.metrics.Metrics;
+import com.codephillip.app.automatedirrigationsystem.provider.croptable.CroptableContentValues;
 import com.codephillip.app.automatedirrigationsystem.provider.metrictable.MetrictableContentValues;
 import com.codephillip.app.automatedirrigationsystem.retrofit.ApiClient;
 import com.codephillip.app.automatedirrigationsystem.retrofit.ApiInterface;
@@ -122,12 +123,13 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         List<Crop> cropList = crops.getCrops();
         for (Crop crop : cropList) {
             Log.d(TAG, "saveCrop: " + crop.getId() + crop.getName() + crop.getCropType() + crop.getOptimalWaterLevel());
-//            CroptableContentValues values = new CroptableContentValues();
-//            values.putName(crop.getName());
-//            values.putCropType(crop.getCropType());
-//            values.putOptimalWaterLevel(crop.getOptimalWaterLevel());
-//            final Uri uri = values.insert(getContext().getContentResolver());
-//            Log.d("INSERT: ", "inserting" + uri.toString());
+            CroptableContentValues values = new CroptableContentValues();
+            values.putKey(crop.getId());
+            values.putName(crop.getName());
+            values.putCropType(crop.getCropType());
+            values.putOptimalWaterLevel(crop.getOptimalWaterLevel());
+            final Uri uri = values.insert(getContext().getContentResolver());
+            Log.d("INSERT: ", "inserting" + uri.toString());
         }
     }
 

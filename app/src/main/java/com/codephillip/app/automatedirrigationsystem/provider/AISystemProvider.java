@@ -1,18 +1,19 @@
 package com.codephillip.app.automatedirrigationsystem.provider;
 
+import java.util.Arrays;
+
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.codephillip.app.automatedirrigationsystem.BuildConfig;
 import com.codephillip.app.automatedirrigationsystem.provider.base.BaseContentProvider;
 import com.codephillip.app.automatedirrigationsystem.provider.croptable.CroptableColumns;
 import com.codephillip.app.automatedirrigationsystem.provider.metrictable.MetrictableColumns;
-
-import java.util.Arrays;
 
 public class AISystemProvider extends BaseContentProvider {
     private static final String TAG = AISystemProvider.class.getSimpleName();

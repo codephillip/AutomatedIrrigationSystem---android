@@ -118,6 +118,46 @@ public class CroptableSelection extends AbstractSelection<CroptableSelection> {
         return this;
     }
 
+    public CroptableSelection key(Integer... value) {
+        addEquals(CroptableColumns.KEY, value);
+        return this;
+    }
+
+    public CroptableSelection keyNot(Integer... value) {
+        addNotEquals(CroptableColumns.KEY, value);
+        return this;
+    }
+
+    public CroptableSelection keyGt(int value) {
+        addGreaterThan(CroptableColumns.KEY, value);
+        return this;
+    }
+
+    public CroptableSelection keyGtEq(int value) {
+        addGreaterThanOrEquals(CroptableColumns.KEY, value);
+        return this;
+    }
+
+    public CroptableSelection keyLt(int value) {
+        addLessThan(CroptableColumns.KEY, value);
+        return this;
+    }
+
+    public CroptableSelection keyLtEq(int value) {
+        addLessThanOrEquals(CroptableColumns.KEY, value);
+        return this;
+    }
+
+    public CroptableSelection orderByKey(boolean desc) {
+        orderBy(CroptableColumns.KEY, desc);
+        return this;
+    }
+
+    public CroptableSelection orderByKey() {
+        orderBy(CroptableColumns.KEY, false);
+        return this;
+    }
+
     public CroptableSelection optimalWaterLevel(Double... value) {
         addEquals(CroptableColumns.OPTIMAL_WATER_LEVEL, value);
         return this;

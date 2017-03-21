@@ -4,6 +4,8 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 
 import com.codephillip.app.automatedirrigationsystem.provider.AISystemProvider;
+import com.codephillip.app.automatedirrigationsystem.provider.croptable.CroptableColumns;
+import com.codephillip.app.automatedirrigationsystem.provider.metrictable.MetrictableColumns;
 
 /**
  * Columns for the {@code croptable} table.
@@ -19,6 +21,8 @@ public class CroptableColumns implements BaseColumns {
 
     public static final String NAME = "name";
 
+    public static final String KEY = "key";
+
     public static final String OPTIMAL_WATER_LEVEL = "optimal_water_level";
 
     public static final String CROP_TYPE = "crop_type";
@@ -30,6 +34,7 @@ public class CroptableColumns implements BaseColumns {
     public static final String[] ALL_COLUMNS = new String[] {
             _ID,
             NAME,
+            KEY,
             OPTIMAL_WATER_LEVEL,
             CROP_TYPE
     };
@@ -39,6 +44,7 @@ public class CroptableColumns implements BaseColumns {
         if (projection == null) return true;
         for (String c : projection) {
             if (c.equals(NAME) || c.contains("." + NAME)) return true;
+            if (c.equals(KEY) || c.contains("." + KEY)) return true;
             if (c.equals(OPTIMAL_WATER_LEVEL) || c.contains("." + OPTIMAL_WATER_LEVEL)) return true;
             if (c.equals(CROP_TYPE) || c.contains("." + CROP_TYPE)) return true;
         }

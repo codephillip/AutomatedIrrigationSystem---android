@@ -1,6 +1,5 @@
 package com.codephillip.app.automatedirrigationsystem;
 
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.CursorLoader;
@@ -33,21 +32,16 @@ public class ConfigurationFragment extends Fragment implements AdapterView.OnIte
         spinner.setOnItemSelectedListener(this);
 
 
-        CursorLoader cursorLoader = new CursorLoader(
-                getContext(), CroptableColumns.CONTENT_URI,null,null,null,null
-        );
-        Cursor cursor = cursorLoader.loadInBackground();
+        CursorLoader cursorLoader = new CursorLoader(getContext(), CroptableColumns.CONTENT_URI,null,null,null,null);
+        CroptableCursor cursor = new CroptableCursor(cursorLoader.loadInBackground());
 
         List<String> categories = new ArrayList<String>();
         if (cursor.moveToFirst()){
-            while(cursor.moveToNext()){
-                CroptableCursor croptableCursor = new CroptableCursor(cursor);
-                categories.add(croptableCursor.getName());
+            do {
+                categories.add(cursor.getName());
             }
+            while(cursor.moveToNext());
         }
-
-//        categories.add("Beans");
-//        categories.add("Coffee");
 
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, categories);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
