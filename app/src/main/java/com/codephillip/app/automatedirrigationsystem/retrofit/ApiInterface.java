@@ -1,5 +1,6 @@
 package com.codephillip.app.automatedirrigationsystem.retrofit;
 
+import com.codephillip.app.automatedirrigationsystem.jsonmodels.crops.Crops;
 import com.codephillip.app.automatedirrigationsystem.jsonmodels.feedbacks.Feedback;
 import com.codephillip.app.automatedirrigationsystem.jsonmodels.metrics.Metrics;
 
@@ -16,6 +17,9 @@ public interface ApiInterface {
 
     @GET("/api/v1/metrics?format=json")
     Call<Metrics> allMetrics();
+
+    @GET("/api/v1/crops?format=json")
+    Call<Crops> allCrops();
 
     @POST("/api/v1/feedbacks")
     Call<Feedback> createFeedback(@Body Feedback feedback);

@@ -14,6 +14,8 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.codephillip.app.automatedirrigationsystem.R;
+import com.codephillip.app.automatedirrigationsystem.jsonmodels.crops.Crop;
+import com.codephillip.app.automatedirrigationsystem.jsonmodels.crops.Crops;
 import com.codephillip.app.automatedirrigationsystem.jsonmodels.metrics.Metric;
 import com.codephillip.app.automatedirrigationsystem.jsonmodels.metrics.Metrics;
 import com.codephillip.app.automatedirrigationsystem.provider.metrictable.MetrictableContentValues;
@@ -52,6 +54,12 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        try {
+            loadCrops();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void loadMetrics() {
@@ -75,8 +83,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         Log.d("INSERT: ", "starting");
         if (metrics == null)
             throw new NullPointerException("Metrics not found");
-        List<Metric> ministryList = metrics.getMetrics();
-        for (Metric metric : ministryList) {
+        List<Metric> metricList = metrics.getMetrics();
+        for (Metric metric : metricList) {
             Log.d(TAG, "saveMetric: " + metric.getId() + metric.getWaterVolume() + metric.getIsIrrigating());
             MetrictableContentValues values = new MetrictableContentValues();
             values.putWaterVolume(metric.getWaterVolume());
@@ -85,6 +93,41 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             values.putTime(metric.getTimeStamp().substring(11, 16));
             final Uri uri = values.insert(getContext().getContentResolver());
             Log.d("INSERT: ", "inserting" + uri.toString());
+        }
+    }
+
+    private void loadCrops() {
+        Log.d("CROP#", "load crops");
+
+        Call<Crops> call = apiInterface.allCrops();
+        call.enqueue(new Callback<Crops>() {
+            @Override
+            public void onResponse(Call<Crops> call, retrofit2.Response<Crops> response) {
+                Log.d("RETROFIT#", "onResponse: " + response.headers());
+                Crops crops = response.body();
+                saveCrops(crops);
+            }
+
+            @Override
+            public void onFailure(Call<Crops> call, Throwable t) {
+                Log.d("RETROFIT#", "onFailure: " + t.toString());
+            }
+        });
+    }
+
+    private void saveCrops(Crops crops) {
+        Log.d("INSERT: CROP", "starting");
+        if (crops == null)
+            throw new NullPointerException("Crops not found");
+        List<Crop> cropList = crops.getCrops();
+        for (Crop crop : cropList) {
+            Log.d(TAG, "saveCrop: " + crop.getId() + crop.getName() + crop.getCropType() + crop.getOptimalWaterLevel());
+//            CroptableContentValues values = new CroptableContentValues();
+//            values.putName(crop.getName());
+//            values.putCropType(crop.getCropType());
+//            values.putOptimalWaterLevel(crop.getOptimalWaterLevel());
+//            final Uri uri = values.insert(getContext().getContentResolver());
+//            Log.d("INSERT: ", "inserting" + uri.toString());
         }
     }
 
