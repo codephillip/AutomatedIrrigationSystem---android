@@ -25,6 +25,10 @@ public class User {
     @Expose
     private Integer crop;
 
+    public User(int crop_id) {
+        this.crop = crop_id;
+    }
+
     public Integer getId() {
         return id;
     }
