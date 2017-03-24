@@ -6,99 +6,125 @@ import android.annotation.TargetApi;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.codephillip.app.automatedirrigationsystem.jsonmodels.users.User;
 import com.codephillip.app.automatedirrigationsystem.retrofit.ApiClient;
 import com.codephillip.app.automatedirrigationsystem.retrofit.ApiInterface;
 
+import java.util.Objects;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 
-public class LoginActivity extends AppCompatActivity {
+public class SignUpActivity extends AppCompatActivity {
 
-    private static final String TAG = LoginActivity.class.getSimpleName();
+    private static final String TAG = SignUpActivity.class.getSimpleName();
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
-    private UserLoginTask mAuthTask = null;
+    private UserLoginTask authTask = null;
     
-    private EditText mPhoneView;
-    private EditText mPasswordView;
-    private View mProgressView;
-    private View mLoginFormView;
+    private EditText nameView;
+    private EditText addressView;
+    private EditText phoneView;
+    private EditText passwordView;
+    private EditText passwordView2;
+    private View progressView;
+    private View loginFormView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-        // Set up the login form.
-        mPhoneView = (EditText) findViewById(R.id.phone);
+        setContentView(R.layout.activity_signup);
 
-        mPasswordView = (EditText) findViewById(R.id.password);
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
-                    return true;
-                }
-                return false;
-            }
-        });
+        nameView = (EditText) findViewById(R.id.name);
+        addressView = (EditText) findViewById(R.id.address);
+        phoneView = (EditText) findViewById(R.id.phone);
+        passwordView = (EditText) findViewById(R.id.password);
+        passwordView2 = (EditText) findViewById(R.id.password2);
 
         Button mSignInButton = (Button) findViewById(R.id.sign_in_button);
         mSignInButton.setOnClickListener(new OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onClick(View view) {
                 attemptLogin();
             }
         });
 
-        mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
+        loginFormView = findViewById(R.id.login_form);
+        progressView = findViewById(R.id.login_progress);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void attemptLogin() {
-        if (mAuthTask != null) {
+        if (authTask != null) {
             return;
         }
 
         // Reset errors.
-        mPhoneView.setError(null);
-        mPasswordView.setError(null);
+        nameView.setError(null);
+        addressView.setError(null);
+        phoneView.setError(null);
+        passwordView.setError(null);
+        passwordView2.setError(null);
 
         // Store values at the time of the login attempt.
-        String phoneNumber = mPhoneView.getText().toString();
-        String password = mPasswordView.getText().toString();
+        String name = nameView.getText().toString();
+        String address = addressView.getText().toString();
+        String phoneNumber = phoneView.getText().toString();
+        String password = passwordView.getText().toString();
+        String password2 = passwordView2.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
 
         // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
-            focusView = mPasswordView;
+        if (!TextUtils.isEmpty(password)
+                && !isPasswordValid(password)
+                && !TextUtils.isEmpty(password2)
+                && !isPasswordValid(password2)) {
+            passwordView.setError(getString(R.string.error_invalid_password));
+            focusView = passwordView;
+            cancel = true;
+        }
+
+        //compare passwords
+        if (!Objects.equals(password, password2)) {
+            passwordView.setError(getString(R.string.error_unmactched_passwords));
+            passwordView2.setError(getString(R.string.error_unmactched_passwords));
+            focusView = passwordView;
+            cancel = true;
+        }
+
+        if (TextUtils.isEmpty(name)) {
+            nameView.setError(getString(R.string.error_field_required));
+            focusView = nameView;
+            cancel = true;
+        }
+
+        if (TextUtils.isEmpty(address)) {
+            addressView.setError(getString(R.string.error_field_required));
+            focusView = addressView;
             cancel = true;
         }
 
         // Check for a valid phoneNumber address.
         if (TextUtils.isEmpty(phoneNumber)) {
-            mPhoneView.setError(getString(R.string.error_field_required));
-            focusView = mPhoneView;
+            phoneView.setError(getString(R.string.error_field_required));
+            focusView = phoneView;
             cancel = true;
         } else if (!isPhoneNumberValid(phoneNumber)) {
-            mPhoneView.setError(getString(R.string.error_invalid_phoneNumber));
-            focusView = mPhoneView;
+            phoneView.setError(getString(R.string.error_invalid_phoneNumber));
+            focusView = phoneView;
             cancel = true;
         }
 
@@ -110,8 +136,8 @@ public class LoginActivity extends AppCompatActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(phoneNumber, password);
-            mAuthTask.execute((Void) null);
+            authTask = new UserLoginTask(phoneNumber, password, name, address);
+            authTask.execute((Void) null);
         }
     }
 
@@ -134,28 +160,28 @@ public class LoginActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
+            loginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            loginFormView.animate().setDuration(shortAnimTime).alpha(
                     show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+                    loginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
                 }
             });
 
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mProgressView.animate().setDuration(shortAnimTime).alpha(
+            progressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            progressView.animate().setDuration(shortAnimTime).alpha(
                     show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+                    progressView.setVisibility(show ? View.VISIBLE : View.GONE);
                 }
             });
         } else {
             // The ViewPropertyAnimator APIs are not available, so simply show
             // and hide the relevant UI components.
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            progressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            loginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
 
@@ -167,10 +193,14 @@ public class LoginActivity extends AppCompatActivity {
 
         private final String mPhoneNumber;
         private final String mPassword;
+        private final String mName;
+        private final String mAddress;
 
-        UserLoginTask(String phoneNumber, String password) {
+        UserLoginTask(String phoneNumber, String password, String name, String address) {
             mPhoneNumber = phoneNumber;
             mPassword = password;
+            mName = name;
+            mAddress = address;
         }
 
         @Override
@@ -179,7 +209,7 @@ public class LoginActivity extends AppCompatActivity {
 
             try {
                 Log.d(TAG, "doInBackground: "+ mPhoneNumber + "#" + mPassword);
-                signUpUser(mPhoneNumber, mPassword);
+                signUpUser(mPhoneNumber, mPassword, mName, mAddress);
             } catch (Exception e) {
                 e.printStackTrace();
                 return false;
@@ -189,10 +219,10 @@ public class LoginActivity extends AppCompatActivity {
             return true;
         }
 
-        private void signUpUser(String phoneNumber, String password) {
+        private void signUpUser(String phoneNumber, String password,  String name, String address) {
             ApiInterface apiInterface = ApiClient.getClient(ApiClient.BASE_URL).create(ApiInterface.class);
             //todo get user name and location from form
-            User user = new User("SampleName", "Samplelocation", phoneNumber, password, 1);
+            User user = new User(name, address, phoneNumber, password, 1);
             Call<User> call = apiInterface.createUser(user);
             call.enqueue(new Callback<User>() {
                 @Override
@@ -210,20 +240,20 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
+            authTask = null;
             showProgress(false);
 
             if (success) {
 //                finish();
             } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
+                passwordView.setError(getString(R.string.error_incorrect_password));
+                passwordView.requestFocus();
             }
         }
 
         @Override
         protected void onCancelled() {
-            mAuthTask = null;
+            authTask = null;
             showProgress(false);
         }
     }

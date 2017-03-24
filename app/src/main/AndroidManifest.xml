@@ -32,8 +32,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LoginActivity"
-            android:label="@string/title_activity_login" >
+            android:name=".SignUpActivity"
+            android:label="@string/title_signup" >
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
