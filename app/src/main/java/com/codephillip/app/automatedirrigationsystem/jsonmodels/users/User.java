@@ -37,6 +37,11 @@ public class User {
         this.crop = crop;
     }
 
+    public User(String phoneNumber, String password) {
+        this.phoneNumber = phoneNumber;
+        this.password = password;
+    }
+
     public Integer getId() {
         return id;
     }

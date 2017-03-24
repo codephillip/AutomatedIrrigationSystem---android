@@ -30,6 +30,9 @@ public interface ApiInterface {
     @POST("/api/v1/users")
     Call<User> createUser(@Body User user);
 
+    @POST
+    Call<User> signInUser(@Url String url, @Body User user);
+
     @POST("/api/v1/feedbacks")
     Call<Feedback> createFeedback(@Body Feedback feedback);
 }

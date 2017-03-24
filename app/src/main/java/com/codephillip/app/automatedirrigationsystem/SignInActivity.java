@@ -4,67 +4,52 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.RequiresApi;
-import android.support.v4.content.CursorLoader;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.codephillip.app.automatedirrigationsystem.jsonmodels.users.User;
-import com.codephillip.app.automatedirrigationsystem.provider.croptable.CroptableColumns;
-import com.codephillip.app.automatedirrigationsystem.provider.croptable.CroptableCursor;
 import com.codephillip.app.automatedirrigationsystem.retrofit.ApiClient;
 import com.codephillip.app.automatedirrigationsystem.retrofit.ApiInterface;
-
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 
-public class SignUpActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
+public class SignInActivity extends AppCompatActivity {
 
-    private static final String TAG = SignUpActivity.class.getSimpleName();
+    private static final String TAG = SignInActivity.class.getSimpleName();
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
-    private UserLoginTask authTask = null;
-    
-    private EditText nameView;
-    private EditText addressView;
+    private UserSignInTask authTask = null;
+
     private EditText phoneView;
     private EditText passwordView;
-    private EditText passwordView2;
     private View progressView;
     private View loginFormView;
+    boolean isRequestSuccessfull = false;
+    public String key = "ServerRequest";
 
-    Map<String, Integer> cropsMap = new Hashtable<>();
-    private Integer cropId = 1;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signup);
+        setContentView(R.layout.activity_sign_in);
 
-        nameView = (EditText) findViewById(R.id.name);
-        addressView = (EditText) findViewById(R.id.address);
         phoneView = (EditText) findViewById(R.id.phone);
         passwordView = (EditText) findViewById(R.id.password);
-        passwordView2 = (EditText) findViewById(R.id.password2);
 
         Button mSignInButton = (Button) findViewById(R.id.sign_in_button);
         mSignInButton.setOnClickListener(new OnClickListener() {
@@ -77,25 +62,6 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
 
         loginFormView = findViewById(R.id.login_form);
         progressView = findViewById(R.id.login_progress);
-
-        Spinner spinner = (Spinner) findViewById(R.id.spinner);
-        spinner.setOnItemSelectedListener(this);
-
-        CursorLoader cursorLoader = new CursorLoader(this, CroptableColumns.CONTENT_URI,null,null,null,null);
-        CroptableCursor cursor = new CroptableCursor(cursorLoader.loadInBackground());
-
-        List<String> categories = new ArrayList<String>();
-        if (cursor.moveToFirst()){
-            do {
-                categories.add(cursor.getName());
-                cropsMap.put(cursor.getName(), cursor.getKey());
-            }
-            while(cursor.moveToNext());
-        }
-
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, categories);
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(dataAdapter);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -105,48 +71,20 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
         }
 
         // Reset errors.
-        nameView.setError(null);
-        addressView.setError(null);
         phoneView.setError(null);
         passwordView.setError(null);
-        passwordView2.setError(null);
 
-        String name = nameView.getText().toString();
-        String address = addressView.getText().toString();
+        // Store values at the time of the login attempt.
         String phoneNumber = phoneView.getText().toString();
         String password = passwordView.getText().toString();
-        String password2 = passwordView2.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
 
         // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password)
-                && !isPasswordValid(password)
-                && !TextUtils.isEmpty(password2)
-                && !isPasswordValid(password2)) {
+        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)){
             passwordView.setError(getString(R.string.error_invalid_password));
             focusView = passwordView;
-            cancel = true;
-        }
-
-        //compare passwords
-        if (!Objects.equals(password, password2)) {
-            passwordView.setError(getString(R.string.error_unmactched_passwords));
-            passwordView2.setError(getString(R.string.error_unmactched_passwords));
-            focusView = passwordView;
-            cancel = true;
-        }
-
-        if (TextUtils.isEmpty(name)) {
-            nameView.setError(getString(R.string.error_field_required));
-            focusView = nameView;
-            cancel = true;
-        }
-
-        if (TextUtils.isEmpty(address)) {
-            addressView.setError(getString(R.string.error_field_required));
-            focusView = addressView;
             cancel = true;
         }
 
@@ -169,7 +107,7 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            authTask = new UserLoginTask(phoneNumber, password, name, address);
+            authTask = new UserSignInTask(phoneNumber, password);
             authTask.execute((Void) null);
         }
     }
@@ -222,42 +160,38 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+    public class UserSignInTask extends AsyncTask<Void, Void, Void> {
 
         private final String mPhoneNumber;
         private final String mPassword;
-        private final String mName;
-        private final String mAddress;
 
-        UserLoginTask(String phoneNumber, String password, String name, String address) {
+
+        public UserSignInTask(String phoneNumber, String password) {
             mPhoneNumber = phoneNumber;
-            mPassword = password;
-            mName = name;
-            mAddress = address;
-        }
+            mPassword = password;        }
 
         @Override
-        protected Boolean doInBackground(Void... params) {
+        protected Void doInBackground(Void... params) {
             try {
                 Log.d(TAG, "doInBackground: "+ mPhoneNumber + "#" + mPassword);
-                signUpUser(mPhoneNumber, mPassword, mName, mAddress);
+                signInUser(mPhoneNumber, mPassword);
             } catch (Exception e) {
                 e.printStackTrace();
-                return false;
             }
-            return true;
+            return null;
         }
 
-        private void signUpUser(String phoneNumber, String password,  String name, String address) {
+        private void signInUser(String phoneNumber, String password) {
             ApiInterface apiInterface = ApiClient.getClient(ApiClient.BASE_URL).create(ApiInterface.class);
-            //todo get user name and location from form
-            User user = new User(name, address, phoneNumber, password, cropId);
-            Call<User> call = apiInterface.createUser(user);
+            User user = new User(phoneNumber, password);
+
+            Call<User> call = apiInterface.signInUser(ApiClient.BASE_URL + "/api/v1/users/" + "17", user);
             call.enqueue(new Callback<User>() {
                 @Override
                 public void onResponse(Call<User> call, retrofit2.Response<User> response) {
                     int statusCode = response.code();
                     Log.d(TAG, "onResponse: #" + statusCode);
+                    saveServerResponse(statusCode == 202);
                 }
 
                 @Override
@@ -268,11 +202,13 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
         }
 
         @Override
-        protected void onPostExecute(final Boolean success) {
+        protected void onPostExecute(Void runagom) {
             authTask = null;
             showProgress(false);
 
-            if (success) {
+            Log.d(TAG, "onPostExecute: " + getServerResponse());
+
+            if (getServerResponse()) {
                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
                 finish();
             } else {
@@ -288,16 +224,19 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
         }
     }
 
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        String item = parent.getItemAtPosition(position).toString();
-        Toast.makeText(parent.getContext(), "Selected: " + item, Toast.LENGTH_LONG).show();
-        cropId = cropsMap.get(item);
+    private void saveServerResponse(boolean isRequestSuccessfull) {
+        Log.d(TAG, "saveServerResponse: " + isRequestSuccessfull);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(key, isRequestSuccessfull);
+        editor.apply();
     }
 
-    @Override
-    public void onNothingSelected(AdapterView<?> arg0) {
-        // TODO Auto-generated method stub
+    private boolean getServerResponse() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean isRequestSuccessfull = prefs.getBoolean(key, false);
+        Log.d("PREF# ", String.valueOf(isRequestSuccessfull));
+        return isRequestSuccessfull;
     }
 }
 
