@@ -34,7 +34,7 @@
     <string name="sync_account_type">com.codephillip.app.automatedirrigationsystem</string>
     <string name="title_chart">Line Chart</string>
     <string name="prompt_phoneNumber">Phone Number</string>
-    <string name="prompt_name">UserName</string>
+    <string name="prompt_name">User Name</string>
     <string name="prompt_address">Address(location)</string>
     <string name="password">Password</string>
     <string name="sign_in">Sign In</string>

@@ -7,24 +7,35 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
+import android.support.v4.content.CursorLoader;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.codephillip.app.automatedirrigationsystem.jsonmodels.users.User;
+import com.codephillip.app.automatedirrigationsystem.provider.croptable.CroptableColumns;
+import com.codephillip.app.automatedirrigationsystem.provider.croptable.CroptableCursor;
 import com.codephillip.app.automatedirrigationsystem.retrofit.ApiClient;
 import com.codephillip.app.automatedirrigationsystem.retrofit.ApiInterface;
 
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 
-public class SignUpActivity extends AppCompatActivity {
+public class SignUpActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
 
     private static final String TAG = SignUpActivity.class.getSimpleName();
     /**
@@ -39,6 +50,9 @@ public class SignUpActivity extends AppCompatActivity {
     private EditText passwordView2;
     private View progressView;
     private View loginFormView;
+
+    Map<String, Integer> cropsMap = new Hashtable<>();
+    private Integer cropId = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +76,25 @@ public class SignUpActivity extends AppCompatActivity {
 
         loginFormView = findViewById(R.id.login_form);
         progressView = findViewById(R.id.login_progress);
+
+        Spinner spinner = (Spinner) findViewById(R.id.spinner);
+        spinner.setOnItemSelectedListener(this);
+
+        CursorLoader cursorLoader = new CursorLoader(this, CroptableColumns.CONTENT_URI,null,null,null,null);
+        CroptableCursor cursor = new CroptableCursor(cursorLoader.loadInBackground());
+
+        List<String> categories = new ArrayList<String>();
+        if (cursor.moveToFirst()){
+            do {
+                categories.add(cursor.getName());
+                cropsMap.put(cursor.getName(), cursor.getKey());
+            }
+            while(cursor.moveToNext());
+        }
+
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, categories);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(dataAdapter);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -205,8 +238,6 @@ public class SignUpActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
-
             try {
                 Log.d(TAG, "doInBackground: "+ mPhoneNumber + "#" + mPassword);
                 signUpUser(mPhoneNumber, mPassword, mName, mAddress);
@@ -214,15 +245,13 @@ public class SignUpActivity extends AppCompatActivity {
                 e.printStackTrace();
                 return false;
             }
-
-            // TODO: register the new account here.
             return true;
         }
 
         private void signUpUser(String phoneNumber, String password,  String name, String address) {
             ApiInterface apiInterface = ApiClient.getClient(ApiClient.BASE_URL).create(ApiInterface.class);
             //todo get user name and location from form
-            User user = new User(name, address, phoneNumber, password, 1);
+            User user = new User(name, address, phoneNumber, password, cropId);
             Call<User> call = apiInterface.createUser(user);
             call.enqueue(new Callback<User>() {
                 @Override
@@ -256,6 +285,18 @@ public class SignUpActivity extends AppCompatActivity {
             authTask = null;
             showProgress(false);
         }
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        String item = parent.getItemAtPosition(position).toString();
+        Toast.makeText(parent.getContext(), "Selected: " + item, Toast.LENGTH_LONG).show();
+        cropId = cropsMap.get(item);
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> arg0) {
+        // TODO Auto-generated method stub
     }
 }
 
