@@ -14,7 +14,7 @@ public class User {
     private String name;
     @SerializedName("phoneNumber")
     @Expose
-    private Integer phoneNumber;
+    private String phoneNumber;
     @SerializedName("password")
     @Expose
     private String password;
@@ -27,6 +27,14 @@ public class User {
 
     public User(int crop_id) {
         this.crop = crop_id;
+    }
+
+    public User(String name, String address, String phoneNumber, String password, int crop){
+        this.name = name;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+        this.password = password;
+        this.crop = crop;
     }
 
     public Integer getId() {
@@ -45,11 +53,11 @@ public class User {
         this.name = name;
     }
 
-    public Integer getPhoneNumber() {
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(Integer phoneNumber) {
+    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 

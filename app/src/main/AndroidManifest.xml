@@ -33,7 +33,11 @@
         </activity>
         <activity
             android:name=".LoginActivity"
-            android:label="@string/title_activity_login" />
+            android:label="@string/title_activity_login" >
+            <intent-filter>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".LineChartActivity"
             android:label="@string/title_chart">
@@ -69,7 +73,7 @@
             android:exported="false" />
 
         <service
-            android:name=".services.UpdateUserService"
+            android:name=".services.UserService"
             android:exported="false"></service>
     </application>
 

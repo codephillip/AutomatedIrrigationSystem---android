@@ -11,12 +11,12 @@ import com.codephillip.app.automatedirrigationsystem.retrofit.ApiInterface;
 import retrofit2.Call;
 import retrofit2.Callback;
 
-public class UpdateUserService extends IntentService {
+public class UserService extends IntentService {
 
-    private static final String TAG = UpdateUserService.class.getSimpleName();
+    private static final String TAG = UserService.class.getSimpleName();
 
-    public UpdateUserService() {
-        super("UpdateUserService");
+    public UserService() {
+        super("UserService");
     }
 
     @Override

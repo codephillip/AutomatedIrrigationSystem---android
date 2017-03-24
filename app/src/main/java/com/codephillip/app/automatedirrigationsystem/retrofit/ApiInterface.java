@@ -27,6 +27,9 @@ public interface ApiInterface {
     @PUT
     Call<User> updateUser(@Url String url, @Body User user);
 
+    @POST("/api/v1/users")
+    Call<User> createUser(@Body User user);
+
     @POST("/api/v1/feedbacks")
     Call<Feedback> createFeedback(@Body Feedback feedback);
 }
