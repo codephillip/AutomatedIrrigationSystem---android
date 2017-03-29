@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.codephillip.app.automatedirrigationsystem.jsonmodels.users.User;
@@ -30,6 +31,7 @@ public class SignInActivity extends AppCompatActivity {
     private static final String TAG = SignInActivity.class.getSimpleName();
     private EditText phoneView;
     private EditText passwordView;
+    private TextView createAccountView;
     private View progressView;
     private View loginFormView;
 
@@ -40,6 +42,14 @@ public class SignInActivity extends AppCompatActivity {
 
         phoneView = (EditText) findViewById(phone);
         passwordView = (EditText) findViewById(R.id.password);
+
+        createAccountView = (TextView) findViewById(R.id.create_account);
+        createAccountView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getApplicationContext(), SignUpActivity.class));
+            }
+        });
 
         Button mSignInButton = (Button) findViewById(R.id.sign_in_button);
         mSignInButton.setOnClickListener(new OnClickListener() {

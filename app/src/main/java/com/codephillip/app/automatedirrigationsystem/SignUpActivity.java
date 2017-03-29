@@ -19,7 +19,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.codephillip.app.automatedirrigationsystem.jsonmodels.users.User;
 import com.codephillip.app.automatedirrigationsystem.provider.croptable.CroptableColumns;
@@ -291,7 +290,6 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         String item = parent.getItemAtPosition(position).toString();
-        Toast.makeText(parent.getContext(), "Selected: " + item, Toast.LENGTH_LONG).show();
         cropId = cropsMap.get(item);
     }
 
