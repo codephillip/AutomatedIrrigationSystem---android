@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.codephillip.app.automatedirrigationsystem.jsonmodels.users.User;
+import com.codephillip.app.automatedirrigationsystem.jsonmodels.users.Users;
 import com.codephillip.app.automatedirrigationsystem.retrofit.ApiClient;
 import com.codephillip.app.automatedirrigationsystem.retrofit.ApiInterface;
 
@@ -39,6 +40,8 @@ public class SignInActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
+
+        Utils.getInstance();
 
         phoneView = (EditText) findViewById(phone);
         passwordView = (EditText) findViewById(R.id.password);
@@ -78,7 +81,7 @@ public class SignInActivity extends AppCompatActivity {
         View focusView = null;
 
         // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)){
+        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
             passwordView.setError(getString(R.string.error_invalid_password));
             focusView = passwordView;
             cancel = true;
@@ -103,10 +106,14 @@ public class SignInActivity extends AppCompatActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            if (Utils.isConnectedToInternet(this))
-                signInUser(phoneNumber, password);
-            else
-                Toast.makeText(this, "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+            try {
+                if (Utils.isConnectedToInternet(this))
+                    signInUser(phoneNumber, password);
+                else
+                    Toast.makeText(this, "Please check your Internet connection", Toast.LENGTH_SHORT).show();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -122,18 +129,19 @@ public class SignInActivity extends AppCompatActivity {
         ApiInterface apiInterface = ApiClient.getClient(ApiClient.BASE_URL).create(ApiInterface.class);
         User user = new User(phoneNumber, password);
 
-        Call<User> call = apiInterface.signInUser(user);
-        call.enqueue(new Callback<User>() {
+        Call<Users> call = apiInterface.signInUser(user);
+        call.enqueue(new Callback<Users>() {
             @Override
-            public void onResponse(Call<User> call, retrofit2.Response<User> response) {
+            public void onResponse(Call<Users> call, retrofit2.Response<Users> response) {
                 int statusCode = response.code();
-                Log.d(TAG, "saveServerResponse: " + (statusCode == 202));
+                Users user = response.body();
+                Utils.user = new User(user.getUsers().get(0).getName(), user.getUsers().get(0).getAddress(), user.getUsers().get(0).getPhoneNumber(), user.getUsers().get(0).getPassword(), user.getUsers().get(0).getCrop());
                 processResult((statusCode == 202));
             }
 
             @Override
-            public void onFailure(Call<User> call, Throwable t) {
-                Log.d(TAG, "onFailure: " + t.toString());
+            public void onFailure(Call<Users> call, Throwable t) {
+                Log.d(TAG, "onFailure: ");
             }
         });
     }
