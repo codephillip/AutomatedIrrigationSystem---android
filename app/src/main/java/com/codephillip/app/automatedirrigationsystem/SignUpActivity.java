@@ -249,7 +249,6 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
 
         private void signUpUser(String phoneNumber, String password,  String name, String address) {
             ApiInterface apiInterface = ApiClient.getClient(ApiClient.BASE_URL).create(ApiInterface.class);
-            //todo get user name and location from form
             User user = new User(name, address, phoneNumber, password, cropId);
             Call<User> call = apiInterface.createUser(user);
             call.enqueue(new Callback<User>() {

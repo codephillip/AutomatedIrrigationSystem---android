@@ -41,6 +41,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                android:id="@+id/name"
                 android:text="Name: Mukasa Peter"
                 android:gravity="center" />
 
@@ -48,6 +49,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                android:id="@+id/phone"
                 android:text="Phone Number: 0774354354"
                 android:gravity="center" />
 
@@ -55,6 +57,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                android:id="@+id/address"
                 android:text="Address: Kampala"
                 android:gravity="center" />
         </LinearLayout>

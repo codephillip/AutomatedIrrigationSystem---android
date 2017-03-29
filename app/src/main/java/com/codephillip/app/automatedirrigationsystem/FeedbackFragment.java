@@ -111,8 +111,8 @@ public class FeedbackFragment extends Fragment{
 
         private void sendFeedback(String topic, String message) {
             ApiInterface apiInterface = ApiClient.getClient(ApiClient.BASE_URL).create(ApiInterface.class);
-            //todo get user id
-            Feedback feedback = new Feedback(topic, message, 1);
+            Utils.getInstance();
+            Feedback feedback = new Feedback(topic, message, Utils.user.getId());
             Call<Feedback> call = apiInterface.createFeedback(feedback);
             call.enqueue(new Callback<Feedback>() {
                 @Override

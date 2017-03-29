@@ -37,7 +37,8 @@ public class User {
         this.crop = crop;
     }
 
-    public User(String name, String address, String phoneNumber, int crop){
+    public User(int id, String name, String address, String phoneNumber, int crop){
+        this.id = id;
         this.name = name;
         this.address = address;
         this.phoneNumber = phoneNumber;
@@ -47,6 +48,14 @@ public class User {
     public User(String phoneNumber, String password) {
         this.phoneNumber = phoneNumber;
         this.password = password;
+    }
+
+    public User(Integer id, String name, String address, String phoneNumber, Integer crop) {
+        this.id = id;
+        this.name = name;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+        this.crop = crop;
     }
 
     public Integer getId() {

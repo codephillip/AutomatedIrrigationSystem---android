@@ -135,7 +135,7 @@ public class SignInActivity extends AppCompatActivity {
             public void onResponse(Call<Users> call, retrofit2.Response<Users> response) {
                 int statusCode = response.code();
                 Users user = response.body();
-                Utils.user = new User(user.getUsers().get(0).getName(), user.getUsers().get(0).getAddress(), user.getUsers().get(0).getPhoneNumber(), user.getUsers().get(0).getPassword(), user.getUsers().get(0).getCrop());
+                Utils.user = new User(user.getUsers().get(0).getId(), user.getUsers().get(0).getName(), user.getUsers().get(0).getAddress(), user.getUsers().get(0).getPhoneNumber(), user.getUsers().get(0).getCrop());
                 processResult((statusCode == 202));
             }
 

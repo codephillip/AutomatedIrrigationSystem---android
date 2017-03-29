@@ -31,7 +31,6 @@ public class AboutFragment extends Fragment implements LoaderManager.LoaderCallb
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.about_recycler);
         adapter = new AboutAdapter(getContext(), null);
         recyclerView.setHasFixedSize(true);
-        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
         return rootView;
