@@ -4,11 +4,8 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -17,6 +14,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.codephillip.app.automatedirrigationsystem.jsonmodels.users.User;
 import com.codephillip.app.automatedirrigationsystem.retrofit.ApiClient;
@@ -25,30 +23,22 @@ import com.codephillip.app.automatedirrigationsystem.retrofit.ApiInterface;
 import retrofit2.Call;
 import retrofit2.Callback;
 
+import static com.codephillip.app.automatedirrigationsystem.R.id.phone;
+
 public class SignInActivity extends AppCompatActivity {
 
     private static final String TAG = SignInActivity.class.getSimpleName();
-    /**
-     * Keep track of the login task to ensure we can cancel it if requested.
-     */
-    private UserSignInTask authTask = null;
-
     private EditText phoneView;
     private EditText passwordView;
     private View progressView;
     private View loginFormView;
-    boolean isRequestSuccessfull = false;
-    public String key = "ServerRequest";
-
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
 
-        phoneView = (EditText) findViewById(R.id.phone);
+        phoneView = (EditText) findViewById(phone);
         passwordView = (EditText) findViewById(R.id.password);
 
         Button mSignInButton = (Button) findViewById(R.id.sign_in_button);
@@ -66,10 +56,6 @@ public class SignInActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void attemptLogin() {
-        if (authTask != null) {
-            return;
-        }
-
         // Reset errors.
         phoneView.setError(null);
         passwordView.setError(null);
@@ -107,8 +93,10 @@ public class SignInActivity extends AppCompatActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            authTask = new UserSignInTask(phoneNumber, password);
-            authTask.execute((Void) null);
+            if (Utils.isConnectedToInternet(this))
+                signInUser(phoneNumber, password);
+            else
+                Toast.makeText(this, "Please check your Internet connection", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -118,6 +106,37 @@ public class SignInActivity extends AppCompatActivity {
 
     private boolean isPasswordValid(String password) {
         return password.length() >= 8;
+    }
+
+    private void signInUser(String phoneNumber, String password) {
+        ApiInterface apiInterface = ApiClient.getClient(ApiClient.BASE_URL).create(ApiInterface.class);
+        User user = new User(phoneNumber, password);
+
+        Call<User> call = apiInterface.signInUser(user);
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, retrofit2.Response<User> response) {
+                int statusCode = response.code();
+                Log.d(TAG, "saveServerResponse: " + (statusCode == 202));
+                processResult((statusCode == 202));
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                Log.d(TAG, "onFailure: " + t.toString());
+            }
+        });
+    }
+
+    private void processResult(boolean success) {
+        showProgress(false);
+        if (success) {
+            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+            finish();
+        } else {
+            passwordView.setError(getString(R.string.error_incorrect_password));
+            passwordView.requestFocus();
+        }
     }
 
     /**
@@ -154,89 +173,6 @@ public class SignInActivity extends AppCompatActivity {
             progressView.setVisibility(show ? View.VISIBLE : View.GONE);
             loginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
-    }
-
-    /**
-     * Represents an asynchronous login/registration task used to authenticate
-     * the user.
-     */
-    public class UserSignInTask extends AsyncTask<Void, Void, Void> {
-
-        private final String mPhoneNumber;
-        private final String mPassword;
-
-
-        public UserSignInTask(String phoneNumber, String password) {
-            mPhoneNumber = phoneNumber;
-            mPassword = password;        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            try {
-                Log.d(TAG, "doInBackground: "+ mPhoneNumber + "#" + mPassword);
-                signInUser(mPhoneNumber, mPassword);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        private void signInUser(String phoneNumber, String password) {
-            ApiInterface apiInterface = ApiClient.getClient(ApiClient.BASE_URL).create(ApiInterface.class);
-            User user = new User(phoneNumber, password);
-
-            Call<User> call = apiInterface.signInUser(ApiClient.BASE_URL + "/api/v1/users/" + "17", user);
-            call.enqueue(new Callback<User>() {
-                @Override
-                public void onResponse(Call<User> call, retrofit2.Response<User> response) {
-                    int statusCode = response.code();
-                    Log.d(TAG, "onResponse: #" + statusCode);
-                    saveServerResponse(statusCode == 202);
-                }
-
-                @Override
-                public void onFailure(Call<User> call, Throwable t) {
-                    Log.d(TAG, "onFailure: " + t.toString());
-                }
-            });
-        }
-
-        @Override
-        protected void onPostExecute(Void runagom) {
-            authTask = null;
-            showProgress(false);
-
-            Log.d(TAG, "onPostExecute: " + getServerResponse());
-
-            if (getServerResponse()) {
-                startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                finish();
-            } else {
-                passwordView.setError(getString(R.string.error_incorrect_password));
-                passwordView.requestFocus();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            authTask = null;
-            showProgress(false);
-        }
-    }
-
-    private void saveServerResponse(boolean isRequestSuccessfull) {
-        Log.d(TAG, "saveServerResponse: " + isRequestSuccessfull);
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean(key, isRequestSuccessfull);
-        editor.apply();
-    }
-
-    private boolean getServerResponse() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean isRequestSuccessfull = prefs.getBoolean(key, false);
-        Log.d("PREF# ", String.valueOf(isRequestSuccessfull));
-        return isRequestSuccessfull;
     }
 }
 
