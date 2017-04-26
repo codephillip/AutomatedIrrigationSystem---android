@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
+import com.codephillip.app.automatedirrigationsystem.ColourQueue;
 import com.codephillip.app.automatedirrigationsystem.R;
 import com.codephillip.app.automatedirrigationsystem.provider.metrictable.MetrictableCursor;
 
@@ -22,6 +23,7 @@ import com.codephillip.app.automatedirrigationsystem.provider.metrictable.Metric
 public class MetricAdapter extends RecyclerView.Adapter<MetricAdapter.ViewHolder> {
     Cursor dataCursor;
     private Context context;
+    private ColourQueue colourQueue;
 
     public MetricAdapter(Context context) {
         this.context = context;
@@ -45,6 +47,7 @@ public class MetricAdapter extends RecyclerView.Adapter<MetricAdapter.ViewHolder
     public MetricAdapter(Context mContext, Cursor cursor) {
         dataCursor = cursor;
         context = mContext;
+        colourQueue = new ColourQueue();
     }
 
     @Override
@@ -77,13 +80,13 @@ public class MetricAdapter extends RecyclerView.Adapter<MetricAdapter.ViewHolder
             holder.timeView.setText(metric.getTime());
 
             ColorGenerator generator = ColorGenerator.MATERIAL; // or use DEFAULT
-            int color1 = generator.getRandomColor();
+            int color = generator.getColor(colourQueue.getCount());
             TextDrawable drawable = TextDrawable.builder()
                     .beginConfig()
                     .width(140)  // width in px
                     .height(140) // height in px
                     .endConfig()
-                    .buildRound(metric.getIsirrigating().toString().substring(0,1), color1);
+                    .buildRound(metric.getIsirrigating().toString().substring(0,1), color);
             holder.imageView.setImageDrawable(drawable);
         } catch (Exception e){
             e.printStackTrace();

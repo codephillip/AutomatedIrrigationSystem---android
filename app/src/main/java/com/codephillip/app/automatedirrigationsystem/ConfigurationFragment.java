@@ -61,19 +61,19 @@ public class ConfigurationFragment extends Fragment implements AdapterView.OnIte
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(getContext(), CroptableColumns.CONTENT_URI,null,null,null,null);
+        return new CursorLoader(getContext(), CroptableColumns.CONTENT_URI, null, null, null, null);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         CroptableCursor cursor = new CroptableCursor(data);
         List<String> categories = new ArrayList<String>();
-        if (cursor.moveToFirst()){
+        if (cursor.moveToFirst()) {
             do {
                 categories.add(cursor.getName());
                 cropsMap.put(cursor.getName(), cursor.getKey());
             }
-            while(cursor.moveToNext());
+            while (cursor.moveToNext());
         }
 
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, categories);
