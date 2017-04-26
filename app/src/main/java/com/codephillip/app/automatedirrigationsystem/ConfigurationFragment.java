@@ -1,7 +1,10 @@
 package com.codephillip.app.automatedirrigationsystem;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.codephillip.app.automatedirrigationsystem.provider.croptable.CroptableColumns;
 import com.codephillip.app.automatedirrigationsystem.provider.croptable.CroptableCursor;
@@ -75,6 +79,7 @@ public class ConfigurationFragment extends Fragment implements AdapterView.OnIte
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, categories);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(dataAdapter);
+        //todo display current crop in the spinner
 
         try {
             nameView.setText("Name: " + Utils.user.getName());
@@ -93,11 +98,28 @@ public class ConfigurationFragment extends Fragment implements AdapterView.OnIte
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         String item = parent.getItemAtPosition(position).toString();
-        getActivity().startService(new Intent(getContext(), UserService.class).putExtra("crop_id", cropsMap.get(item)));
+        if (isConnectedToInternet())
+            getActivity().startService(new Intent(getContext(), UserService.class).putExtra("crop_id", cropsMap.get(item)));
+        else
+            Toast.makeText(getContext(), "Check Internet Connection", Toast.LENGTH_SHORT).show();
     }
+
 
     @Override
     public void onNothingSelected(AdapterView<?> arg0) {
         // TODO Auto-generated method stub
+    }
+
+    private boolean isConnectedToInternet() {
+        ConnectivityManager connectivity = (ConnectivityManager) getActivity().getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivity != null) {
+            NetworkInfo[] info = connectivity.getAllNetworkInfo();
+            if (info != null)
+                for (int i = 0; i < info.length; i++)
+                    if (info[i].getState() == NetworkInfo.State.CONNECTED) {
+                        return true;
+                    }
+        }
+        return false;
     }
 }

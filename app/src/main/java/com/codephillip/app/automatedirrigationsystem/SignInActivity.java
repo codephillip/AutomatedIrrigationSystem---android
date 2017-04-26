@@ -22,6 +22,8 @@ import com.codephillip.app.automatedirrigationsystem.jsonmodels.users.Users;
 import com.codephillip.app.automatedirrigationsystem.retrofit.ApiClient;
 import com.codephillip.app.automatedirrigationsystem.retrofit.ApiInterface;
 
+import javax.net.ssl.HttpsURLConnection;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 
@@ -135,8 +137,7 @@ public class SignInActivity extends AppCompatActivity {
             public void onResponse(Call<Users> call, retrofit2.Response<Users> response) {
                 int statusCode = response.code();
                 Users user = response.body();
-                Utils.user = new User(user.getUsers().get(0).getId(), user.getUsers().get(0).getName(), user.getUsers().get(0).getAddress(), user.getUsers().get(0).getPhoneNumber(), user.getUsers().get(0).getCrop());
-                processResult((statusCode == 202));
+                processResult((statusCode == HttpsURLConnection.HTTP_ACCEPTED), user);
             }
 
             @Override
@@ -146,9 +147,10 @@ public class SignInActivity extends AppCompatActivity {
         });
     }
 
-    private void processResult(boolean success) {
+    private void processResult(boolean success, Users user) {
         showProgress(false);
         if (success) {
+            Utils.user = new User(user.getUsers().get(0).getId(), user.getUsers().get(0).getName(), user.getUsers().get(0).getAddress(), user.getUsers().get(0).getPhoneNumber(), user.getUsers().get(0).getCrop());
             startActivity(new Intent(getApplicationContext(), MainActivity.class));
             finish();
         } else {

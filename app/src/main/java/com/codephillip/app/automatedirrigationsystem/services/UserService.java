@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
 
+import com.codephillip.app.automatedirrigationsystem.Utils;
 import com.codephillip.app.automatedirrigationsystem.jsonmodels.users.User;
 import com.codephillip.app.automatedirrigationsystem.retrofit.ApiClient;
 import com.codephillip.app.automatedirrigationsystem.retrofit.ApiInterface;
@@ -31,10 +32,8 @@ public class UserService extends IntentService {
 
     private void updateUserData(int crop_id) {
         ApiInterface apiInterface = ApiClient.getClient(ApiClient.BASE_URL).create(ApiInterface.class);
-        //todo get user id
-        int user_id = 5;
         User user = new User(crop_id);
-        String url = ApiClient.BASE_URL + "/api/v1/users/" + user_id;
+        String url = ApiClient.BASE_URL + "/api/v1/users/" + Utils.user.getId();
         Log.d(TAG, "updateUserData: " + url);
         Call<User> call = apiInterface.updateUser(url, user);
         call.enqueue(new Callback<User>() {
