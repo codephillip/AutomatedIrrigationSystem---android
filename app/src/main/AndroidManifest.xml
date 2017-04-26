@@ -21,18 +21,10 @@
             android:name=".MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".SignUpActivity"
             android:label="@string/title_signup" >
-            <intent-filter>
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".SignInActivity"/>
@@ -42,6 +34,7 @@
             android:name=".SignInActivity"
             android:label="@string/title_activity_login" >
             <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -49,9 +42,9 @@
         <activity
             android:name=".LineChartActivity"
             android:label="@string/title_chart">
-            <intent-filter>
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity"/>
         </activity>
 
         <service android:name=".sync.AuthenticatorService">
