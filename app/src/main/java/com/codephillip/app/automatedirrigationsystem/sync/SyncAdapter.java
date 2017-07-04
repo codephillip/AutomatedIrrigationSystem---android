@@ -18,6 +18,7 @@ import com.codephillip.app.automatedirrigationsystem.jsonmodels.crops.Crop;
 import com.codephillip.app.automatedirrigationsystem.jsonmodels.crops.Crops;
 import com.codephillip.app.automatedirrigationsystem.jsonmodels.metrics.Metric;
 import com.codephillip.app.automatedirrigationsystem.jsonmodels.metrics.Metrics;
+import com.codephillip.app.automatedirrigationsystem.provider.croptable.CroptableColumns;
 import com.codephillip.app.automatedirrigationsystem.provider.croptable.CroptableContentValues;
 import com.codephillip.app.automatedirrigationsystem.provider.metrictable.MetrictableContentValues;
 import com.codephillip.app.automatedirrigationsystem.retrofit.ApiClient;
@@ -118,6 +119,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
     private void saveCrops(Crops crops) {
         Log.d("INSERT: CROP", "starting");
+        double deleted = getContext().getContentResolver().delete(CroptableColumns.CONTENT_URI, null, null);
+        Log.d(TAG, "delete crops: " + deleted);
         if (crops == null)
             throw new NullPointerException("Crops not found");
         List<Crop> cropList = crops.getCrops();

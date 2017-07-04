@@ -174,7 +174,7 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
     }
 
     private boolean isPhoneNumberValid(String phone) {
-        return phone.length() == 10;
+        return phone.length() == 12;
     }
 
     private boolean isPasswordValid(String password) {

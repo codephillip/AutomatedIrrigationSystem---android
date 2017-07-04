@@ -11,6 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.codephillip.app.automatedirrigationsystem.provider.metrictable.MetrictableCursor;
+import com.codephillip.app.automatedirrigationsystem.provider.metrictable.MetrictableSelection;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +48,7 @@ public class LineChartActivity extends ActionBarActivity {
         private LineChartView chart;
         private LineChartData data;
         private int numberOfLines = 1;
-        private int maxNumberOfLines = 4;
+        private int maxNumberOfLines = 1;
         private int numberOfPoints = 12;
 
         float[][] randomNumbersTab = new float[maxNumberOfLines][numberOfPoints];
@@ -186,9 +189,14 @@ public class LineChartActivity extends ActionBarActivity {
         }
 
         private void generateValues() {
-            for (int i = 0; i < maxNumberOfLines; ++i) {
-                for (int j = 0; j < numberOfPoints; ++j) {
-                    randomNumbersTab[i][j] = (float) Math.random() * 100f;
+            MetrictableCursor cursor = new MetrictableSelection().query(getContext().getContentResolver());
+            if (cursor.moveToFirst()) {
+                for (int i = 0; i < maxNumberOfLines; ++i) {
+                    for (int j = 0; j < numberOfPoints; ++j) {
+//                    randomNumbersTab[i][j] = (float) Math.random() * 100f;
+                        randomNumbersTab[i][j] = Float.parseFloat(cursor.getWaterVolume().toString());
+                        cursor.moveToNext();
+                    }
                 }
             }
         }
@@ -247,11 +255,12 @@ public class LineChartActivity extends ActionBarActivity {
             data = new LineChartData(lines);
 
             if (hasAxes) {
+                //todo add time to X axis
                 Axis axisX = new Axis();
                 Axis axisY = new Axis().setHasLines(true);
                 if (hasAxesNames) {
-                    axisX.setName("Axis X");
-                    axisY.setName("Axis Y");
+                    axisX.setName("Time(3hr)");
+                    axisY.setName("Water Volume");
                 }
                 data.setAxisXBottom(axisX);
                 data.setAxisYLeft(axisY);

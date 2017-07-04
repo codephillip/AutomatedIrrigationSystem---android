@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,6 +37,7 @@ public class ConfigurationFragment extends Fragment implements AdapterView.OnIte
 
     TextView nameView, addressView, phoneView;
     Spinner spinner;
+    Button saveButton;
 
     public ConfigurationFragment() {
     }
@@ -48,7 +50,16 @@ public class ConfigurationFragment extends Fragment implements AdapterView.OnIte
         spinner.setOnItemSelectedListener(this);
         nameView = (TextView) rootView.findViewById(R.id.name);
         addressView = (TextView) rootView.findViewById(R.id.address);
+        saveButton = (Button) rootView.findViewById(R.id.save_button);
         phoneView = (TextView) rootView.findViewById(R.id.phone);
+
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getContext(), "Updated crop", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         Utils.getInstance();
         return rootView;
     }

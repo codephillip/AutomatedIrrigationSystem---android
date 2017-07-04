@@ -120,7 +120,7 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     private boolean isPhoneNumberValid(String phone) {
-        return phone.length() == 10;
+        return phone.length() == 12;
     }
 
     private boolean isPasswordValid(String password) {
@@ -149,7 +149,9 @@ public class SignInActivity extends AppCompatActivity {
 
     private void processResult(boolean success, Users user) {
         showProgress(false);
+
         if (success) {
+            Log.d(TAG, "processResult: #" + user.getUsers().get(0).getId() + user.getUsers().get(0).getName() + user.getUsers().get(0).getAddress() + user.getUsers().get(0).getPhoneNumber() + user.getUsers().get(0).getCrop());
             Utils.user = new User(user.getUsers().get(0).getId(), user.getUsers().get(0).getName(), user.getUsers().get(0).getAddress(), user.getUsers().get(0).getPhoneNumber(), user.getUsers().get(0).getCrop());
             startActivity(new Intent(getApplicationContext(), MainActivity.class));
             finish();

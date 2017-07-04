@@ -70,7 +70,7 @@ public class SystemStatusFragment extends Fragment implements LoaderManager.Load
     private void populateIrrigationViewData(Cursor data) {
         data.moveToFirst();
         MetrictableCursor metric = new MetrictableCursor(data);
-        irrigationgView.setText("IRRIGATION: " + metric.getIsirrigating());
+//        irrigationgView.setText("IRRIGATION: " + metric.getIsirrigating());
     }
 
     @Override
