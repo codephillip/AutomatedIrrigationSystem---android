@@ -6,7 +6,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiClient {
     //use http://10.0.3.2 when using genymotion emulator
-    public static final String BASE_URL = "http://10.0.3.2:8000";
+//    public static final String BASE_URL = "http://10.0.3.2:8000";
+    //production url
+    public static final String BASE_URL = "https://ais-api.herokuapp.com";
     private static Retrofit retrofit = null;
 
 
