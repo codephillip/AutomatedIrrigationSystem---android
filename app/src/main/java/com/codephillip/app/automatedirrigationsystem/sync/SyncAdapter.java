@@ -20,6 +20,7 @@ import com.codephillip.app.automatedirrigationsystem.jsonmodels.metrics.Metric;
 import com.codephillip.app.automatedirrigationsystem.jsonmodels.metrics.Metrics;
 import com.codephillip.app.automatedirrigationsystem.provider.croptable.CroptableColumns;
 import com.codephillip.app.automatedirrigationsystem.provider.croptable.CroptableContentValues;
+import com.codephillip.app.automatedirrigationsystem.provider.metrictable.MetrictableColumns;
 import com.codephillip.app.automatedirrigationsystem.provider.metrictable.MetrictableContentValues;
 import com.codephillip.app.automatedirrigationsystem.retrofit.ApiClient;
 import com.codephillip.app.automatedirrigationsystem.retrofit.ApiInterface;
@@ -50,6 +51,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         Log.d(TAG, "ONPERFORMSYNC");
 
         apiInterface = ApiClient.getClient(ApiClient.BASE_URL).create(ApiInterface.class);
+
+        deleteTables();
 
         try {
             loadMetrics();
@@ -283,20 +286,12 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 //        }
 //    }
 
-//    private void deleteTables() {
-//        long deleted;
-//        deleted = getContext().getContentResolver().delete(MinistriesColumns.CONTENT_URI, null, null);
-//        Log.d("CONTENT_QUERY_deleted#", String.valueOf(deleted));
-//        deleted = getContext().getContentResolver().delete(ChaptersColumns.CONTENT_URI, null, null);
-//        Log.d("CONTENT_QUERY_deleted#", String.valueOf(deleted));
-//        deleted = getContext().getContentResolver().delete(EventsColumns.CONTENT_URI, null, null);
-//        Log.d("CONTENT_QUERY_deleted#", String.valueOf(deleted));
-//        deleted = getContext().getContentResolver().delete(TodayweatherColumns.CONTENT_URI, null, null);
-//        Log.d("CONTENT_QUERY_deleted#", String.valueOf(deleted));
-//        deleted = getContext().getContentResolver().delete(WeatherColumns.CONTENT_URI, null, null);
-//        Log.d("CONTENT_QUERY_deleted#", String.valueOf(deleted));
-//        deleted = getContext().getContentResolver().delete(DistrictsColumns.CONTENT_URI, null, null);
-//        Log.d("CONTENT_QUERY_deleted#", String.valueOf(deleted));
-//    }
+    private void deleteTables() {
+        long deleted;
+        deleted = getContext().getContentResolver().delete(MetrictableColumns.CONTENT_URI, null, null);
+        Log.d("CONTENT_QUERY_deleted#", String.valueOf(deleted));
+        deleted = getContext().getContentResolver().delete(CroptableColumns.CONTENT_URI, null, null);
+        Log.d("CONTENT_QUERY_deleted#", String.valueOf(deleted));
+    }
 }
 

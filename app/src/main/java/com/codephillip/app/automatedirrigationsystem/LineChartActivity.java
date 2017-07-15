@@ -45,13 +45,12 @@ public class LineChartActivity extends ActionBarActivity {
      */
     public static class PlaceholderFragment extends Fragment {
 
+        private static final String TAG = "CHART";
         private LineChartView chart;
         private LineChartData data;
         private int numberOfLines = 1;
         private int maxNumberOfLines = 1;
-        private int numberOfPoints = 12;
 
-        float[][] randomNumbersTab = new float[maxNumberOfLines][numberOfPoints];
 
         private boolean hasAxes = true;
         private boolean hasAxesNames = true;
@@ -64,6 +63,8 @@ public class LineChartActivity extends ActionBarActivity {
         private boolean hasLabelForSelected = false;
         private boolean pointsHaveDifferentColor;
         private boolean hasGradientToTransparent = false;
+        private int numberOfPoints;
+        private float[][] randomNumbersTab;
 
         public PlaceholderFragment() {
         }
@@ -190,6 +191,10 @@ public class LineChartActivity extends ActionBarActivity {
 
         private void generateValues() {
             MetrictableCursor cursor = new MetrictableSelection().query(getContext().getContentResolver());
+
+            numberOfPoints = cursor.getCount();
+            randomNumbersTab = new float[maxNumberOfLines][numberOfPoints];
+
             if (cursor.moveToFirst()) {
                 for (int i = 0; i < maxNumberOfLines; ++i) {
                     for (int j = 0; j < numberOfPoints; ++j) {
@@ -223,7 +228,7 @@ public class LineChartActivity extends ActionBarActivity {
             // Reset viewport height range to (0,100)
             final Viewport v = new Viewport(chart.getMaximumViewport());
             v.bottom = 0;
-            v.top = 100;
+            v.top = 1000;
             v.left = 0;
             v.right = numberOfPoints - 1;
             chart.setMaximumViewport(v);
@@ -259,7 +264,7 @@ public class LineChartActivity extends ActionBarActivity {
                 Axis axisX = new Axis();
                 Axis axisY = new Axis().setHasLines(true);
                 if (hasAxesNames) {
-                    axisX.setName("Time(3hr)");
+                    axisX.setName("Time(5min)");
                     axisY.setName("Water Volume");
                 }
                 data.setAxisXBottom(axisX);

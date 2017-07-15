@@ -33,9 +33,9 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         //todo activate in production
-        SyncAdapter.initializeSyncAdapter(getApplicationContext());
+//        SyncAdapter.initializeSyncAdapter(getApplicationContext());
         //todo debug purposes only
-//        SyncAdapter.syncImmediately(getApplicationContext());
+        SyncAdapter.syncImmediately(getApplicationContext());
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
